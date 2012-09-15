@@ -1,0 +1,16 @@
+name'Violent Assault'
+boss'-1'
+screens'10'
+enemy'1'"30"
+enemy'2'"35"
+enemy'4'"1"
+ally'1'"2"
+ally'2'"2"
+addbg(0,gfx\bg\bg1.jpg,5,255)
+asteroid_types(0,1,2,3,4)
+asteroid_prob'50'
+asteroid_maxcooldown'5000'
+container_prob'25'
+finishscript{
+  pass_lvl(2)
+}

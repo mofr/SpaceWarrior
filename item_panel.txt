@@ -1,0 +1,4 @@
+imgpath'gfx\other\itslot.gif'
+bar(10,22,1,31)
+item(40,32)
+cutteddy'4'

@@ -1,0 +1,10 @@
+indx'0'
+skills
+  {
+  bullet_speed'90'
+  move_speed'90'
+  bullet_dmg'90'
+  merchant'0'
+  }
+name'Player name'
+[END]

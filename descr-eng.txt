@@ -1,0 +1,41 @@
+In development the following programs are used:
+Free Pascal, Blender, YafRay, GIMP
+And also library Graphix for Free Pascal.
+
+During game the player is or at station, or carries out mission.
+At station is possible:
+  1)To raise characteristics of the pilot (player) for skill points 
+    (are charged at increase of a level of the pilot)
+  2)Improving the ship for money
+  3)Buy\sell various items(equipment of the ship):
+    weapons, generators of a power field for protection of the ship, etc.
+  4)To choose a level for passage
+
+Saving game is possible only at station.
+There are two methods of money earning:
+  1)Collecting containers in the space
+  2)Passing levels
+Experience is charged for destruction of your enemies.
+
+CONTROLS
+
+F12 Make screenshot
+
+ON STATION:
+F2      Command Line
+F5      Quicksave
+F9      Quickload
+
+IN THE SPACE:
+1-9     Items use hotkeys
+CTRL       Attack random ready weapon
+LMB,Left Arrow     Move ship left
+RMB,Right Arrow     Move ship right
+MMB,Up Arror     Move ship forward
+LMB+RMB,Down Arrow Move ship backward
+H       Show\hide HP bars
+Q       Repair ship
+R       Turn on\off ship autorepair
+C       Show\hide Statistics window
+I       Show\hide Item Panel
+ESC     Game menu

@@ -1,0 +1,6 @@
+indx'16'
+imgmain'gfx\effects\explode7.gif'
+imgmask'gfx\effects\explode7mask.gif'
+soundpath'sfx\explosions\exp1.wav'
+frtime'50'
+mask'1'

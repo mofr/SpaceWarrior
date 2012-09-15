@@ -1,0 +1,17 @@
+name'Asteroid Zone'
+boss'-1'
+screens'25'
+enemy'1'"5"
+enemy'2'"5"
+enemy'4'"2"
+addbg(0,gfx\bg\bg1.jpg,2,255)
+container_prob'100'
+asteroid_types(0,1,2,3,4)
+asteroid_prob'100'
+asteroid_maxcooldown'350'
+asteroid_minvel(25,10)
+asteroid_veloffs(20,10)
+finishscript{
+  pass_lvl(3)
+  avail_lvl(4)
+}

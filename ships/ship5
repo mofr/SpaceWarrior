@@ -1,0 +1,21 @@
+indx'5'
+mainimg'gfx\ships\ship7.gif'
+imgmask'gfx\ships\ship7mask.gif'
+turnability'1'
+turnkoef'80'
+eff'11'
+scoreprize'80'
+ptype'4'
+life'320'
+att_cooldown'500'
+pilot'1'
+skills
+  {
+  bullet_speed'70'
+  move_speed'50'
+  bullet_dmg'80'
+  attack_speed'30'
+  }
+addslot'0':1:"-20"*0*^4^
+addslot'1':1:"20"*0*^1^
+[END]

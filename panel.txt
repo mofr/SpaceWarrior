@@ -1,0 +1,8 @@
+imgpath'gfx\other\panel1.gif'
+x'73'
+y1'42'
+y2'59'
+y3'75'
+y4'93'
+w'120'
+h'7'

@@ -1,0 +1,40 @@
+В разработке используются следующие программы:
+Blender, YafRay, GIMP
+А также библиотека Graphix для паскаля.
+
+Во время игры игрок находится либо на станции, либо выполняет миссию.
+На станции можно:
+  1)повышать характеристики пилота(игрока)за очки умений
+    (начисляются при повышении уровня пилота)
+  2)совершенствовать свой корабль за деньги
+  3)Покупать\продавать различные вещи(снаряжение корабля):оружие, 
+    генераторы силового поля для защиты корабля и др.
+  4)Выбрать уровень для прохождения
+
+Сохранять игру можно только на станции.
+Деньги можно получить собирая контейнеры, выпадающие из уничтоженных вражеских кораблей
+или зы прохождение уровней.
+Опыт начисляется за уничтожение врагов.
+
+CONTROLS
+
+F12 Make screenshot
+
+ON STATION:
+F2      Command Line
+F5      Quicksave
+F9      Quickload
+
+IN THE SPACE:
+1-9     Items use hotkeys
+CTRL       Attack random ready weapon
+LMB,Left Arrow     Move ship left
+RMB,Right Arrow     Move ship right
+MMB,Up Arror     Move ship forward
+LMB+RMB,Down Arrow Move ship backward
+H       Show\hide HP bars
+Q       Repair ship
+R       Turn on\off ship autorepair
+C       Show\hide Statistics window
+I       Show\hide Item Panel
+ESC     Game menu

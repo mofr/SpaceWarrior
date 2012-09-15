@@ -1,0 +1,6 @@
+indx'11'
+imgmain'gfx\effects\explode3.gif'
+imgmask'gfx\effects\explode3mask.gif'
+soundpath'sfx\explosions\exp1.wav'
+frtime'45'
+mask'1'

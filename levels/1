@@ -1,0 +1,17 @@
+name'First Space Flight'
+boss'3'
+screens'10'
+enemy'1'"25"
+enemy'2'"10"
+addbg(0,gfx\bg\bg1.jpg,6,255)
+container_prob'20'
+asteroid_types(0,1,2,3,4)
+asteroid_prob'50'
+asteroid_maxcooldown'8000'
+asteroid_minvel(35,20)
+asteroid_veloffs(60,40)
+finishscript{
+  avail_lvl(2)
+  avail_lvl(3)
+  pass_lvl(1)
+}

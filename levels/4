@@ -1,0 +1,15 @@
+name'Razzle-Dazzle'
+boss'-1'
+screens'6'
+enemy'1'"10"
+enemy'2'"10"
+enemy'4'"6"
+addbg(0,gfx\bg\bg1.jpg,5,255)
+asteroid_types(0,1,2,3,4)
+asteroid_prob'100'
+asteroid_maxcooldown'3000'
+container_prob'40'
+finishscript{
+  pass_lvl(4)
+  avail_lvl(5)
+}
