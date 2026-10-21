@@ -1754,7 +1754,7 @@ BEGIN
     fs_pattern:
       BEGIN
         move(pattern^,curpattern^,8);
-{$IF GO32V2}
+{$IFDEF GO32V2}
         IF HWAenabled THEN setpatternHW(curpattern);
 {$ENDIF}
         lineH:=lineH_pattern;
