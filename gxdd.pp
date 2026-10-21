@@ -18,10 +18,10 @@
 }
 
 {$I gxglobal.cfg}
+{$MODE DELPHI}
 UNIT gxdd;
 
 INTERFACE
-{$MODE DELPHI}
 
 USES gxcrtext,gxtype,gxbase,windows,directdraw,sysutils,directdrawfpc,
   strings,gxmouse,gxsup,bass;
