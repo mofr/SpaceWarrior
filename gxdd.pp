@@ -48,7 +48,7 @@ FUNCTION DDGetMouseY:longint;
 FUNCTION DDGetMouseRelX:longint;
 FUNCTION DDGetMouseRelY:longint;
 FUNCTION DDGetMouseButton:byte;
-FUNCTION DDSetMouseCallback(cb:pointer);
+PROCEDURE DDSetMouseCallback(cb:pointer);
 FUNCTION ROPsupported(rop:dword):boolean;
 PROCEDURE DDsethwaprocs(col:longint);
 
@@ -758,7 +758,7 @@ BEGIN
   DDGetMouseButton:=GXmb;
 END;
 
-FUNCTION DDSetMouseCallback(cb:pointer);
+PROCEDURE DDSetMouseCallback(cb:pointer);
 BEGIN
   IF (cb=nil) THEN GXMouseCallbackUsed:=FALSE;
   GXMouseCallback:=cb;
