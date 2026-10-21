@@ -9,7 +9,7 @@ from io import BytesIO
 from pathlib import Path
 from collections import Counter
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageChops
 
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "gfx"
@@ -52,8 +52,11 @@ def lookup_mask(p, files):
     return None
 
 def alpha_from_mask(frame):
-    # Mask luminance is proportional to opacity (black=clear, white=solid).
-    return ImageOps.grayscale(frame.convert("RGB"))
+    # Black=transparent, white=opaque. Respect GIF transparency too:
+    # otherwise discarded frame pixels may become opaque white boxes.
+    rgba = frame.convert("RGBA")
+    luminance = ImageOps.grayscale(rgba.convert("RGB"))
+    return ImageChops.multiply(luminance, rgba.getchannel("A"))
 
 def make():
     ASSETS.mkdir(parents=True, exist_ok=True)
@@ -109,7 +112,9 @@ def make():
                         durations.append(max(50, gif.info.get("duration", 100)))
                         if external is not None:
                             external.seek(i)
-                            frame.putalpha(alpha_from_mask(external))
+                            # Preserve transparency encoded in the color GIF too.
+                            frame.putalpha(ImageChops.multiply(
+                                frame.getchannel("A"), alpha_from_mask(external)))
                         frames.append(frame)
                 save(frames[0], img_target)
                 total_png += 1
@@ -202,6 +207,14 @@ const counter=document.getElementById("counter");
 const filters=document.getElementById("filters");
 const query=document.getElementById("query");
 let active="all";
+const animatedCards = new Set();
+const viewportObserver = new IntersectionObserver(entries=>{
+ for(const entry of entries){
+  const card=entry.target;
+  if(entry.isIntersecting && !document.hidden)card.startAnimation?.();
+  else card.stopAnimation?.();
+ }
+},{rootMargin:"100px"});
 const categories=["all",...new Set(assets.map(a=>a.category))];
 categories.forEach(cat=>{
  const b=document.createElement("button");b.textContent=cat==="all"?"All":cat;b.dataset.cat=cat;
@@ -209,6 +222,8 @@ categories.forEach(cat=>{
 });
 function updateFilters(){filters.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.cat===active))}
 function render(){
+ for(const card of animatedCards){card.stopAnimation?.();viewportObserver.unobserve(card)}
+ animatedCards.clear();
  const q=query.value.trim().toLowerCase();
  const entries=assets.filter(a=>(active==="all"||a.category===active)&&a.name.toLowerCase().includes(q));
  counter.textContent=entries.length+" items · "+assets.length+" total";
@@ -225,23 +240,50 @@ function render(){
   const tags=document.createElement("div");tags.className="tags";
   const tag=(s)=>{const n=document.createElement("span");n.className="tag";n.textContent=s;tags.append(n)};
   tag(a.size.join("×"));if(a.frames.length)tag(a.frames.length+" frames");
-  if(a.embedded_mask)tag("embedded alpha");if(a.external_mask)tag("external alpha");
+  if(a.embedded_mask)tag("embedded alpha");
   meta.append(name,tags);
   if(a.frames.length){
-   let idx=0;let tick=null;
+   let idx=0, direction=1, tick=null, scrubbing=false;
    const controls=document.createElement("div");controls.className="frame";
    const range=document.createElement("input");range.type="range";range.min=0;range.max=a.frames.length-1;range.value=0;
    const label=document.createElement("span");label.textContent="1 / "+a.frames.length;
-   const show=()=>{img.src=a.frames[idx];link.href=img.src;range.value=idx;label.textContent=(idx+1)+" / "+a.frames.length};
+   const show=()=>{const src=a.frames[idx];if(!img.src.endsWith(src))img.src=src;link.href=src;range.value=idx;label.textContent=(idx+1)+" / "+a.frames.length};
+   const advance=()=>{
+    if(scrubbing)return;
+    if(a.category==="ships" && a.frames.length>2){
+     if(idx===a.frames.length-1)direction=-1;
+     else if(idx===0)direction=1;
+     idx+=direction;
+    }else idx=(idx+1)%a.frames.length;
+    show();
+   };
+   card.startAnimation=()=>{
+    if(tick===null && !scrubbing){
+     show();
+     tick=setInterval(advance,Math.max(70,a.delays[0]||100));
+    }
+   };
+   card.stopAnimation=()=>{if(tick!==null){clearInterval(tick);tick=null}};
+   range.addEventListener("pointerdown",()=>{scrubbing=true;card.stopAnimation()});
+   const resume=()=>{if(scrubbing){scrubbing=false;if(!document.hidden)card.startAnimation()}};
+   range.addEventListener("pointerup",resume);
+   range.addEventListener("pointercancel",resume);
+   range.addEventListener("change",resume);
    range.oninput=()=>{idx=+range.value;show()};
-   card.onmouseenter=()=>{if(tick===null)tick=setInterval(()=>{idx=(idx+1)%a.frames.length;show()},Math.max(70,Math.min(250,a.delays[0]||100)))};
-   card.onmouseleave=()=>{clearInterval(tick);tick=null;idx=0;img.src=a.image;link.href=a.image;range.value=0;label.textContent="1 / "+a.frames.length};
    controls.append(label,range);meta.append(controls);
+   animatedCards.add(card);
   }
   card.append(visual,meta);fragment.append(card);
+  if(a.frames.length)viewportObserver.observe(card);
  }
  gallery.append(fragment);
 }
+document.addEventListener("visibilitychange",()=>{
+ for(const card of animatedCards){
+  if(document.hidden)card.stopAnimation?.();
+  else if(card.getBoundingClientRect().bottom>=-100 && card.getBoundingClientRect().top<=innerHeight+100)card.startAnimation?.();
+ }
+});
 query.addEventListener("input",render);
 document.getElementById("size").addEventListener("input",e=>document.documentElement.style.setProperty("--tile",e.target.value+"px"));
 document.getElementById("smooth").addEventListener("change",e=>document.body.classList.toggle("smooth",e.target.checked));
