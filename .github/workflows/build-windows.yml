@@ -57,9 +57,22 @@ jobs:
           Unzip ALL files to a writable folder, then start main.exe.
           This is a 32-bit Windows program using old DirectDraw and BASS.
           Modern Windows 10/11 compatibility is not guaranteed.
-          If graphics fail, try Windows compatibility settings / DirectDraw wrapper (e.g. dgVoodoo2).
+          Includes optional cnc-ddraw (ddraw.dll) for Windows 10/11. If incompatible, delete ddraw.dll and retry.
           Check BUILD_STATUS.txt to see whether main.exe was freshly compiled or original.
           '@ | Set-Content 'dist/READ_ME_FIRST.txt'
+
+      - name: Bundle DirectDraw compatibility layer
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $url = 'https://github.com/CnCNet/cnc-ddraw/releases/download/v7.1.0.0/cnc-ddraw.zip'
+          Invoke-WebRequest -Uri $url -OutFile 'cnc-ddraw.zip'
+          $hash = (Get-FileHash 'cnc-ddraw.zip' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($hash -ne '0b13ab89a64c9918189b1dadd449ef6ed3cb3b7b19cabd96d8adbd95505bb908') {
+            throw "Unexpected cnc-ddraw ZIP checksum: $hash"
+          }
+          Expand-Archive -Path 'cnc-ddraw.zip' -DestinationPath 'dist' -Force
+          Write-Host 'Bundled cnc-ddraw v7.1.0.0 for DirectDraw compatibility'
 
       - uses: actions/upload-artifact@v4
         with:
