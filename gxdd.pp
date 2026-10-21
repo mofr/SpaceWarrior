@@ -253,7 +253,7 @@ BEGIN
   releaseDC(h_wnd,h_dc);
 END;
 
-FUNCTION WindowProc(h_Wnd:HWND;aMSG:Cardinal;wParam:Cardinal;lParam:Integer):Integer;stdcall;
+FUNCTION WindowProc(h_Wnd:HWND;aMSG:Cardinal;wParam:LongInt;lParam:LongInt):LongInt;stdcall;
 VAR hRet:HRESULT;
     ret,i,j:integer;
     kbstate:array[0..255] of byte;
@@ -761,7 +761,7 @@ END;
 PROCEDURE DDSetMouseCallback(cb:pointer);
 BEGIN
   IF (cb=nil) THEN GXMouseCallbackUsed:=FALSE;
-  GXMouseCallback:=cb;
+  Pointer(GXMouseCallback):=cb;
   IF (cb<>nil) THEN GXMouseCallbackUsed:=TRUE;
 END;
 
