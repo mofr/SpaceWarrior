@@ -24,7 +24,7 @@ interface
 {$ENDIF}
 
 uses
-  Windows{$IFDEF FPC},ActiveX{$ENDIF};
+  Windows;
 
 var
   DDrawDLL : HMODULE = 0;
