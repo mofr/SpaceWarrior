@@ -5,7 +5,7 @@ unit DirectDrawFPC;
 interface
 
 uses
-	windows, DirectDraw, ole2;
+	windows, DirectDraw, ActiveX;
 
 
 // IDirectDraw interface methods
