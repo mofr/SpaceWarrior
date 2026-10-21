@@ -58,6 +58,18 @@ def alpha_from_mask(frame):
     luminance = ImageOps.grayscale(rgba.convert("RGB"))
     return ImageChops.multiply(luminance, rgba.getchannel("A"))
 
+def open_mask_gif(path):
+    """GIF disposal can fill outside the current frame with an opaque WHITE
+    global background. On ship1/ship2 masks it produces ghostly rectangles
+    whose positions change with rotation. A mask needs a black background.
+    Change only the logical-screen background INDEX, not the sprite palette.
+    """
+    data = bytearray(path.read_bytes())
+    if data[:6] not in (b"GIF87a", b"GIF89a"):
+        raise ValueError(f"Not a GIF: {path}")
+    data[11] = 0   # global palette entry 0 is black in these masks
+    return Image.open(BytesIO(data))
+
 def make():
     ASSETS.mkdir(parents=True, exist_ok=True)
     gifs = sorted(INPUT.rglob("*.gif"))
@@ -94,7 +106,7 @@ def make():
             if embedded and (frame_count != 2 or mask_path is not None):
                 warnings.append("Embedded mask did not have 2 frames: " + rel.as_posix())
                 embedded = False
-            external = Image.open(mask_path) if mask_path else None
+            external = open_mask_gif(mask_path) if mask_path else None
             try:
                 frames = []
                 if embedded:
@@ -186,7 +198,7 @@ main{padding:0 clamp(16px,4vw,70px) 100px}
 body.smooth .visual img{image-rendering:auto}
 .meta{padding:11px 13px 13px}.name{font-size:12px;overflow-wrap:anywhere;line-height:1.35;font-weight:660;min-height:2.7em;margin-bottom:7px}
 .tags{font-size:11px;display:flex;gap:7px;flex-wrap:wrap;color:var(--mute)}.tag{padding:2px 7px;border-radius:5px;background:#252b3c}
-.frame{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--mute);margin-top:9px}.frame input{width:105px}
+
 .visual a{position:absolute;inset:0;z-index:1}footer{color:var(--mute);padding:28px 0;opacity:.8}footer a{color:var(--hi)}
 @media(max-width:550px){header{position:static}.visual{height:145px}.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.meta{padding:9px}.name{font-size:11px}}
 </style></head><body>
@@ -243,14 +255,15 @@ function render(){
   if(a.embedded_mask)tag("embedded alpha");
   meta.append(name,tags);
   if(a.frames.length){
-   let idx=0, direction=1, tick=null, scrubbing=false;
-   const controls=document.createElement("div");controls.className="frame";
-   const range=document.createElement("input");range.type="range";range.min=0;range.max=a.frames.length-1;range.value=0;
-   const label=document.createElement("span");label.textContent="1 / "+a.frames.length;
-   const show=()=>{const src=a.frames[idx];if(!img.src.endsWith(src))img.src=src;link.href=src;range.value=idx;label.textContent=(idx+1)+" / "+a.frames.length};
+   let idx=0, direction=1, tick=null;
+   const show=()=>{
+    const src=a.frames[idx];
+    if(!img.src.endsWith(src))img.src=src;
+    link.href=src;
+   };
    const advance=()=>{
-    if(scrubbing)return;
-    if(a.category==="ships" && a.frames.length>2){
+    const bounce=(a.category==="ships"||a.name==="other/gate.gif");
+    if(bounce && a.frames.length>2){
      if(idx===a.frames.length-1)direction=-1;
      else if(idx===0)direction=1;
      idx+=direction;
@@ -258,19 +271,12 @@ function render(){
     show();
    };
    card.startAnimation=()=>{
-    if(tick===null && !scrubbing){
+    if(tick===null){
      show();
-     tick=setInterval(advance,Math.max(70,a.delays[0]||100));
+     tick=setInterval(advance,Math.max(70,a.delays[idx]||100));
     }
    };
    card.stopAnimation=()=>{if(tick!==null){clearInterval(tick);tick=null}};
-   range.addEventListener("pointerdown",()=>{scrubbing=true;card.stopAnimation()});
-   const resume=()=>{if(scrubbing){scrubbing=false;if(!document.hidden)card.startAnimation()}};
-   range.addEventListener("pointerup",resume);
-   range.addEventListener("pointercancel",resume);
-   range.addEventListener("change",resume);
-   range.oninput=()=>{idx=+range.value;show()};
-   controls.append(label,range);meta.append(controls);
    animatedCards.add(card);
   }
   card.append(visual,meta);fragment.append(card);
