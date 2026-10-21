@@ -18,7 +18,6 @@
 }
 
 {$I gxglobal.cfg}
-{$MODE DELPHI}
 UNIT gxdd;
 
 INTERFACE
